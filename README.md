@@ -4,28 +4,32 @@ Collection of utility functions for Deno
 
 ## Developers
 
+### Setup
+
+To install Deno, see the
+[installation guide](https://deno.land/manual/getting_started/installation).
+
+To run commands, you will need to install Velociraptor. See the
+[installation guide](https://velociraptor.run/docs/installation/).
+
 ### Testing
 
 ```shell
-deno test
+vr test
 ```
 
-#### Collect Coverage
+#### Coverage
 
-```shell
-deno test --coverage=__coverage__
-```
-
-#### Display Coverage
-
-```shell
-deno coverage __coverage__
-```
-
-or
+To generate coverage reports you will need to install `lcov`.
 
 ```shell
 apt install lcov
-deno coverage __coverage__ --lcov > coverage.lcov
-genhtml -o __coverage__/html coverage.lcov
 ```
+
+Once you have installed `lcov`, you can generate a coverage report using:
+
+```shell
+vr test:coverage
+```
+
+This will be available at `__coverage__/html/index.html`.
