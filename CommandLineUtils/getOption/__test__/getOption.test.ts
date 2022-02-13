@@ -2,10 +2,10 @@ import { assertEquals } from "https://deno.land/std@0.125.0/testing/asserts.ts";
 import { argsFactory } from "../../../utils/test/factories/argsFactory.ts";
 import { toArgsArray } from "../../../utils/test/factories/toArgsArray.ts";
 import {
-  NamedArgOptions,
   AliasedArgOptions,
-  ArgOptions,
   AnonymousArgOptions,
+  ArgOptions,
+  NamedArgOptions,
 } from "../../../utils/test/factories/types.ts";
 import { getOption } from "../index.ts";
 
@@ -415,7 +415,7 @@ Deno.test("getOption", async (test) => {
           });
         });
       });
-    }
+    },
   );
 
   await test.step(
@@ -564,6 +564,6 @@ Deno.test("getOption", async (test) => {
           assertEquals(result, false);
         });
       });
-    }
+    },
   );
 });

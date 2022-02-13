@@ -5,9 +5,9 @@ import {
   AnonymousArgObject,
   AnonymousArgOptions,
   ArgObject,
+  ArgOptions,
   NamedArgObject,
   NamedArgOptions,
-  ArgOptions,
 } from "./types.ts";
 
 export function namedArgFactory(options: NamedArgOptions): NamedArgObject {
@@ -18,14 +18,14 @@ export function namedArgFactory(options: NamedArgOptions): NamedArgObject {
       .map(
         options.equals
           ? (value) => [`--${options.name}=${value}`]
-          : (value) => [`--${options.name}`, `${value}`]
+          : (value) => [`--${options.name}`, `${value}`],
       )
       .flat(),
   };
 }
 
 export function aliasedArgFactory(
-  options: AliasedArgOptions
+  options: AliasedArgOptions,
 ): AliasedArgObject {
   return {
     ...options,
@@ -34,14 +34,14 @@ export function aliasedArgFactory(
       .map(
         options.equals
           ? (value) => [`-${options.alias}=${value}`]
-          : (value) => [`-${options.alias}`, `${value}`]
+          : (value) => [`-${options.alias}`, `${value}`],
       )
       .flat(),
   };
 }
 
 export function anonymousArgFactory(
-  options: AnonymousArgOptions
+  options: AnonymousArgOptions,
 ): AnonymousArgObject {
   return {
     ...options,

@@ -17,7 +17,10 @@ export type AnonymousArgOptions = {
   value: string;
 };
 
-export type ArgOptions = NamedArgOptions | AliasedArgOptions | AnonymousArgOptions;
+export type ArgOptions =
+  | NamedArgOptions
+  | AliasedArgOptions
+  | AnonymousArgOptions;
 
 export type ArgObject<T extends ArgOptions = ArgOptions> = T & {
   args: string[];

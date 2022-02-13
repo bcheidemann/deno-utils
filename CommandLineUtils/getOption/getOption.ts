@@ -1,8 +1,8 @@
 import {
-  OptionTypes,
+  GetValueAtIndexOptions,
   NullableOptionTypeMap,
   Options,
-  GetValueAtIndexOptions,
+  OptionTypes,
 } from "../types.ts";
 import { InvalidOptionTypeError } from "./errors.ts";
 
@@ -12,19 +12,21 @@ function nextArgIndex(argIndex: number) {
 
 function mapValueToType<T extends OptionTypes>(
   value: string | NullableOptionTypeMap[T],
-  type: T
+  type: T,
 ): NullableOptionTypeMap[T] {
   switch (type) {
     case "string":
       if (typeof value === "string") return value as NullableOptionTypeMap[T];
       return value;
     case "number":
-      if (typeof value === "string")
+      if (typeof value === "string") {
         return new Number(value).valueOf() as NullableOptionTypeMap[T];
+      }
       return value;
     case "boolean":
-      if (typeof value === "string")
+      if (typeof value === "string") {
         return (value.toLowerCase() === "true") as NullableOptionTypeMap[T];
+      }
       return value;
     default:
       throw new InvalidOptionTypeError(type);
@@ -33,15 +35,17 @@ function mapValueToType<T extends OptionTypes>(
 
 function getValueAtIndex<T = undefined>(
   argIndex: number,
-  { defaultValue, args = Deno.args }: GetValueAtIndexOptions<T> = {}
+  { defaultValue, args = Deno.args }: GetValueAtIndexOptions<T> = {},
 ): string | undefined | T {
-  if (argIndex === -1 || typeof args[argIndex] === "undefined") return defaultValue;
+  if (argIndex === -1 || typeof args[argIndex] === "undefined") {
+    return defaultValue;
+  }
   return args[argIndex];
 }
 
 function handleGetOptionValueS(
   argIndex: number,
-  args: Array<string>
+  args: Array<string>,
 ): NullableOptionTypeMap["string"] {
   return getValueAtIndex(nextArgIndex(argIndex), {
     args,
@@ -50,7 +54,7 @@ function handleGetOptionValueS(
 
 function handleGetOptionValueN(
   argIndex: number,
-  args: Array<string>
+  args: Array<string>,
 ): NullableOptionTypeMap["number"] {
   const value = getValueAtIndex(nextArgIndex(argIndex), {
     args,
@@ -61,13 +65,13 @@ function handleGetOptionValueN(
 function handleGetOptionValueB(
   argIndex: number,
 ): NullableOptionTypeMap["boolean"] {
-  return argIndex !== -1
+  return argIndex !== -1;
 }
 
 function handleGetOptionValue<T extends OptionTypes>(
   argIndex: number,
   type: T,
-  args: string[]
+  args: string[],
 ): NullableOptionTypeMap[T] {
   switch (type) {
     case "string":

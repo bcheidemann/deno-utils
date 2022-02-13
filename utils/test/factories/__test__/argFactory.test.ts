@@ -75,7 +75,7 @@ Deno.test("argFactory", async (test) => {
           "myDummyValue3",
         ],
       });
-    }
+    },
   );
 
   await test.step("should correctly generate aliased args", () => {
@@ -142,7 +142,7 @@ Deno.test("argFactory", async (test) => {
           "myDummyValue3",
         ],
       });
-    }
+    },
   );
 
   await test.step("should correctly generate anonymous args", () => {

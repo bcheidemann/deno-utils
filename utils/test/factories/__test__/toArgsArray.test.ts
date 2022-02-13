@@ -45,7 +45,7 @@ Deno.test("toArgsArray", async (test) => {
         namedArgOptions2,
         aliasedArgOptions1,
         aliasedArgOptions2,
-        anonymousArgOptions
+        anonymousArgOptions,
       );
 
       // Act
@@ -61,6 +61,6 @@ Deno.test("toArgsArray", async (test) => {
         "-o=myAliasedDummyValue",
         "myAnonymousDummyValue",
       ]);
-    }
+    },
   );
 });

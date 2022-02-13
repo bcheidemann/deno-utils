@@ -32,7 +32,7 @@ Deno.test("argsFactory", async (test) => {
       const argObjects = argsFactory(
         namedArgOptions,
         aliasedArgOptions,
-        anonymousArgOptions
+        anonymousArgOptions,
       );
 
       // Assert
@@ -50,6 +50,6 @@ Deno.test("argsFactory", async (test) => {
           args: ["myAnonymousDummyValue"],
         },
       ]);
-    }
+    },
   );
 });
