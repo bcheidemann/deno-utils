@@ -24,7 +24,7 @@ function mapValueToType<T extends OptionTypes>(
       return value;
     case "boolean":
       if (typeof value === "string")
-        return (value === "true") as NullableOptionTypeMap[T];
+        return (value.toLowerCase() === "true") as NullableOptionTypeMap[T];
       return value;
     default:
       throw new InvalidOptionTypeError(type);
