@@ -5,6 +5,7 @@ import {
   NamedArgOptions,
   AliasedArgOptions,
   ArgOptions,
+  AnonymousArgOptions,
 } from "../../../utils/test/factories/types.ts";
 import { getOption } from "../index.ts";
 
@@ -21,8 +22,13 @@ const namedNumberArgOptions: NamedArgOptions = {
 };
 const namedBooleanArgOptions: NamedArgOptions = {
   name: "namedBoolean",
+  equals: true, // Must be equals format because --booleanValue false would be interpreted as booleanValue=true and an anonymous option of "false"
   type: "named",
-  values: ["true"],
+  values: ["false"],
+};
+const implicitNamedBooleanArg: AnonymousArgOptions = {
+  type: "anonymous",
+  value: "--implicitNamedBoolean",
 };
 const aliasedStringArgOptions: AliasedArgOptions = {
   alias: "s",
@@ -36,16 +42,25 @@ const aliasedNumberArgOptions: AliasedArgOptions = {
 };
 const aliasedBooleanArgOptions: AliasedArgOptions = {
   alias: "b",
+  equals: true, // Must be equals format because --booleanValue false would be interpreted as booleanValue=true and an anonymous option of "false"
   type: "aliased",
-  values: ["true"],
+  values: ["false"],
+};
+const implicitAliasedBooleanArgOptions: AnonymousArgOptions = {
+  type: "anonymous",
+  value: "-ib",
 };
 const baseArgOptions: Array<ArgOptions> = [
   namedStringArgOptions,
   namedNumberArgOptions,
-  namedBooleanArgOptions,
   aliasedStringArgOptions,
   aliasedNumberArgOptions,
+];
+const booleanArgOptions: Array<ArgOptions> = [
+  namedBooleanArgOptions,
+  implicitNamedBooleanArg,
   aliasedBooleanArgOptions,
+  implicitAliasedBooleanArgOptions,
 ];
 const equalsArgOptions = baseArgOptions.map((options) => ({
   ...options,
@@ -53,14 +68,15 @@ const equalsArgOptions = baseArgOptions.map((options) => ({
 }));
 const baseArgObjects = argsFactory(...baseArgOptions);
 const equalsArgObjects = argsFactory(...equalsArgOptions);
+const booleanArgObjects = argsFactory(...booleanArgOptions);
 const baseArgs = {
   args: toArgsArray(baseArgObjects),
 };
 const equalsArgs = {
   args: toArgsArray(equalsArgObjects),
 };
-const duplicateArgs = {
-  args: [...toArgsArray(baseArgObjects), ...toArgsArray(baseArgObjects)],
+const booleanArgs = {
+  args: toArgsArray(booleanArgObjects),
 };
 
 Deno.test("getOption", async (test) => {
@@ -91,7 +107,7 @@ Deno.test("getOption", async (test) => {
   await test.step(
     "should return the correct value when the option is specified in args",
     async (test) => {
-      await test.step("equals format", async (test) => {
+      await test.step("separated format", async (test) => {
         await test.step("string type options", async (test) => {
           await test.step("named option", () => {
             // Arrange
@@ -189,58 +205,7 @@ Deno.test("getOption", async (test) => {
             // Assert
             assertEquals(result, [
               Number(namedNumberArgOptions.values[0]),
-              Number(aliasedNumberArgOptions.values[0])
-            ]);
-          });
-        });
-
-        await test.step("boolean type options", async (test) => {
-          await test.step("named option", () => {
-            // Arrange
-            const { args } = baseArgs;
-
-            // Act
-            const result = getOption({
-              args,
-              type: "boolean",
-              name: "namedBoolean",
-            });
-
-            // Assert
-            assertEquals(result, Boolean(namedBooleanArgOptions.values[0]));
-          });
-
-          await test.step("aliased option", () => {
-            // Arrange
-            const { args } = baseArgs;
-
-            // Act
-            const result = getOption({
-              args,
-              type: "boolean",
-              alias: "b",
-            });
-
-            // Assert
-            assertEquals(result, Boolean(aliasedBooleanArgOptions.values[0]));
-          });
-
-          await test.step("named or aliased option", () => {
-            // Arrange
-            const { args } = baseArgs;
-
-            // Act
-            const result = getOption({
-              args,
-              type: "boolean",
-              name: "namedBoolean",
-              alias: "n",
-            });
-
-            // Assert
-            assertEquals(result, [
-              Boolean(aliasedBooleanArgOptions.values[0]),
-              Boolean(aliasedBooleanArgOptions.values[0]),
+              Number(aliasedNumberArgOptions.values[0]),
             ]);
           });
         });
@@ -344,15 +309,17 @@ Deno.test("getOption", async (test) => {
             // Assert
             assertEquals(result, [
               Number(namedNumberArgOptions.values[0]),
-              Number(aliasedNumberArgOptions.values[0])
+              Number(aliasedNumberArgOptions.values[0]),
             ]);
           });
         });
+      });
 
-        await test.step("boolean type options", async (test) => {
+      await test.step("boolean type options", async (test) => {
+        await test.step("explicit boolean options", async (test) => {
           await test.step("named option", () => {
             // Arrange
-            const { args } = equalsArgs;
+            const { args } = booleanArgs;
 
             // Act
             const result = getOption({
@@ -362,12 +329,12 @@ Deno.test("getOption", async (test) => {
             });
 
             // Assert
-            assertEquals(result, Boolean(namedBooleanArgOptions.values[0]));
+            assertEquals(result, namedBooleanArgOptions.values[0] === "true");
           });
 
           await test.step("aliased option", () => {
             // Arrange
-            const { args } = equalsArgs;
+            const { args } = booleanArgs;
 
             // Act
             const result = getOption({
@@ -377,26 +344,74 @@ Deno.test("getOption", async (test) => {
             });
 
             // Assert
-            assertEquals(result, Boolean(aliasedBooleanArgOptions.values[0]));
+            assertEquals(result, aliasedBooleanArgOptions.values[0] === "true");
           });
 
           await test.step("named or aliased option", () => {
             // Arrange
-            const { args } = equalsArgs;
+            const { args } = booleanArgs;
 
             // Act
             const result = getOption({
               args,
               type: "boolean",
               name: "namedBoolean",
-              alias: "n",
+              alias: "b",
             });
 
             // Assert
             assertEquals(result, [
-              Boolean(aliasedBooleanArgOptions.values[0]),
-              Boolean(aliasedBooleanArgOptions.values[0]),
+              namedBooleanArgOptions.values[0] === "true",
+              aliasedBooleanArgOptions.values[0] === "true",
             ]);
+          });
+        });
+
+        await test.step("implicit boolean options", async (test) => {
+          await test.step("named option", () => {
+            // Arrange
+            const { args } = booleanArgs;
+
+            // Act
+            const result = getOption({
+              args,
+              type: "boolean",
+              name: "implicitNamedBoolean",
+            });
+
+            // Assert
+            assertEquals(result, true);
+          });
+
+          await test.step("aliased option", () => {
+            // Arrange
+            const { args } = booleanArgs;
+
+            // Act
+            const result = getOption({
+              args,
+              type: "boolean",
+              alias: "ib",
+            });
+
+            // Assert
+            assertEquals(result, true);
+          });
+
+          await test.step("named or aliased option", () => {
+            // Arrange
+            const { args } = booleanArgs;
+
+            // Act
+            const result = getOption({
+              args,
+              type: "boolean",
+              name: "implicitNamedBoolean",
+              alias: "ib",
+            });
+
+            // Assert
+            assertEquals(result, [true, true]);
           });
         });
       });

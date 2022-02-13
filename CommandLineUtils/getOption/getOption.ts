@@ -24,7 +24,7 @@ function mapValueToType<T extends OptionTypes>(
       return value;
     case "boolean":
       if (typeof value === "string")
-        return new Boolean(value).valueOf() as NullableOptionTypeMap[T];
+        return (value === "true") as NullableOptionTypeMap[T];
       return value;
     default:
       throw new InvalidOptionTypeError(type);
@@ -60,13 +60,8 @@ function handleGetOptionValueN(
 
 function handleGetOptionValueB(
   argIndex: number,
-  args: Array<string>
 ): NullableOptionTypeMap["boolean"] {
-  const value = getValueAtIndex(nextArgIndex(argIndex), {
-    args,
-    defaultValue: false,
-  });
-  return mapValueToType(value, "boolean");
+  return argIndex !== -1
 }
 
 function handleGetOptionValue<T extends OptionTypes>(
@@ -80,7 +75,7 @@ function handleGetOptionValue<T extends OptionTypes>(
     case "number":
       return handleGetOptionValueN(argIndex, args) as NullableOptionTypeMap[T];
     case "boolean":
-      return handleGetOptionValueB(argIndex, args) as NullableOptionTypeMap[T];
+      return handleGetOptionValueB(argIndex) as NullableOptionTypeMap[T];
     default:
       throw new InvalidOptionTypeError(type);
   }
