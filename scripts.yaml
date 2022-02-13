@@ -1,0 +1,15 @@
+scripts:
+  test: deno test
+  lint: deno lint
+  lint:fix: deno fmt
+
+  pre-commit:
+    cmd:
+      - vr format
+    gitHook: pre-commit
+
+  pre-push:
+    cmd:
+      - vr lint
+      - vr test
+    gitHook: pre-push
