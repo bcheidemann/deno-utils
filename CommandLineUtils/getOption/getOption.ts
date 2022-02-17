@@ -2,6 +2,7 @@ import {
   GetValueAtIndexOptions,
   NullableOptionTypeMap,
   Options,
+  OptionTypeMap,
   OptionTypes,
 } from "../types.ts";
 import { InvalidOptionTypeError } from "./errors.ts";
@@ -72,14 +73,14 @@ function handleGetOptionValue<T extends OptionTypes>(
   argIndex: number,
   type: T,
   args: string[],
-): NullableOptionTypeMap[T] {
+): OptionTypeMap[T] {
   switch (type) {
     case "string":
-      return handleGetOptionValueS(argIndex, args) as NullableOptionTypeMap[T];
+      return handleGetOptionValueS(argIndex, args) as OptionTypeMap[T];
     case "number":
-      return handleGetOptionValueN(argIndex, args) as NullableOptionTypeMap[T];
+      return handleGetOptionValueN(argIndex, args) as OptionTypeMap[T];
     case "boolean":
-      return handleGetOptionValueB(argIndex) as NullableOptionTypeMap[T];
+      return handleGetOptionValueB(argIndex) as OptionTypeMap[T];
     default:
       throw new InvalidOptionTypeError(type);
   }
@@ -90,22 +91,22 @@ export function getOption<T extends OptionTypes>({
   args = Deno.args,
   name,
   type,
-}: Options<T>): NullableOptionTypeMap[T] | Array<NullableOptionTypeMap[T]> {
+}: Options<T>): NullableOptionTypeMap[T] | Array<OptionTypeMap[T]> {
   const argAlias = alias && `-${alias}`,
     argAliasEquals = alias && `${argAlias}=`,
     argName = name && `--${name}`,
     argNameEquals = name && `${argName}=`;
-  const results = new Array<NullableOptionTypeMap[T]>();
+  const results = new Array<OptionTypeMap[T]>();
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     if (arg === argAlias || arg === argName) {
       results.push(handleGetOptionValue(i, type, args));
     } else if (argAliasEquals && arg.startsWith(argAliasEquals)) {
       const value = arg.substring(argAliasEquals.length);
-      results.push(mapValueToType(value, type));
+      results.push(mapValueToType(value, type) as OptionTypeMap[T]);
     } else if (argNameEquals && arg.startsWith(argNameEquals)) {
       const value = arg.substring(argNameEquals.length);
-      results.push(mapValueToType(value, type));
+      results.push(mapValueToType(value, type) as OptionTypeMap[T]);
     }
   }
   if (results.length === 0) {
