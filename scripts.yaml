@@ -3,7 +3,7 @@ scripts:
   test:coverage:
     cmd:
       - deno test --coverage=__coverage__
-      - deno coverage __coverage__ --lcov > coverage.lcov
+      - deno coverage __coverage__ --lcov --output=coverage.lcov
       - genhtml -o __coverage__/html coverage.lcov
   lint: deno lint
   lint:fix: deno fmt
