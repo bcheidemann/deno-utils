@@ -1,15 +1,3 @@
-export type SerializableKey = string | number;
-export type SerializableValue =
-  | string
-  | number
-  | boolean
-  | undefined
-  | null
-  | SerializableObject;
-export type SerializableObject = {
-  [key: SerializableKey]: SerializableValue;
-};
-
 export type RunnerOptions<
   RunOptions extends Deno.RunOptions = Deno.RunOptions,
 > = {

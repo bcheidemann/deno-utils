@@ -1,6 +1,7 @@
+import { SerializableValue } from "../../utils/types/serializable.ts";
 import { defaultOptions } from "./defaultOptions.ts";
 import { PermissonNotGrantedError } from "./errors.ts";
-import { RunnerOptions, SerializableValue } from "./types.ts";
+import { RunnerOptions } from "./types.ts";
 
 function runnerFactory<RunOptions extends Deno.RunOptions = Deno.RunOptions>({
   options,
@@ -9,12 +10,12 @@ function runnerFactory<RunOptions extends Deno.RunOptions = Deno.RunOptions>({
 }: RunnerOptions<RunOptions>) {
   return async function run(
     templateStrings: TemplateStringsArray,
-    ...vars: SerializableValue[]
+    ...expressions: SerializableValue[]
   ): Promise<Deno.ProcessStatus> {
     const cmd = templateStrings
-      .map((templateString, i) => [templateString, String(vars[i])]) // TODO: stringify objects
+      .map((templateString, i) => [templateString, String(expressions[i])]) // TODO: stringify objects
       .flat()
-      .splice(0, templateStrings.length + vars.length)
+      .splice(0, templateStrings.length + expressions.length)
       .join("")
       .split(" ");
 
