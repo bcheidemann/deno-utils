@@ -11,14 +11,18 @@ Deno.test("readJsonFileSync", async (test) => {
       "some": "value",
       "is": true
     }`;
-    const readTextFileSpy = spy(() => textContent);
-    const reatTextFileStub = stub(Deno, "readTextFileSync", readTextFileSpy);
+    const readTextFileSyncSpy = spy(() => textContent);
+    const reatTextFileSyncStub = stub(
+      Deno,
+      "readTextFileSync",
+      readTextFileSyncSpy,
+    );
 
     // Act
     const result = readJsonFileSync(filePath);
 
     // Assert
-    assertSpyCall(readTextFileSpy, 0, {
+    assertSpyCall(readTextFileSyncSpy, 0, {
       args: [filePath],
     });
     assertEquals(result, {
@@ -27,6 +31,6 @@ Deno.test("readJsonFileSync", async (test) => {
     });
 
     // Restore
-    reatTextFileStub.restore();
+    reatTextFileSyncStub.restore();
   });
 });
