@@ -13,6 +13,7 @@ export type OptionValueTypes<T extends OptionTypes = OptionTypes> =
 export type Options<T extends OptionTypes> = {
   alias?: string;
   args?: string[];
+  defaultValue?: OptionTypeMap[T];
   name?: string;
   type: T;
 };

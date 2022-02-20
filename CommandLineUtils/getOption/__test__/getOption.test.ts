@@ -18,7 +18,7 @@ const namedStringArgOptions: NamedArgOptions = {
 const namedNumberArgOptions: NamedArgOptions = {
   name: "namedNumber",
   type: "named",
-  values: ["1372"],
+  values: ["42"],
 };
 const namedBooleanArgOptions: NamedArgOptions = {
   name: "namedBoolean",
@@ -566,4 +566,54 @@ Deno.test("getOption", async (test) => {
       });
     },
   );
+
+  await test.step("should return defaultValue when this is provided and the option is not found", async (test) => {
+    await test.step("string type option", () => {
+      // Arrange
+      const args = new Array<string>();
+
+      // Act
+      const result = getOption({
+        args,
+        defaultValue: "Hello World!",
+        type: "string",
+        name: "stringOption",
+      });
+
+      // Assert
+      assertEquals(result, "Hello World!");
+    });
+
+    await test.step("number type option", () => {
+      // Arrange
+      const args = new Array<string>();
+
+      // Act
+      const result = getOption({
+        args,
+        defaultValue: 42,
+        type: "number",
+        name: "stringOption",
+      });
+
+      // Assert
+      assertEquals(result, 42);
+    });
+
+    await test.step("boolean type option", () => {
+      // Arrange
+      const args = new Array<string>();
+
+      // Act
+      const result = getOption({
+        args,
+        defaultValue: true,
+        type: "boolean",
+        name: "stringOption",
+      });
+
+      // Assert
+      assertEquals(result, true);
+    });
+  });
 });

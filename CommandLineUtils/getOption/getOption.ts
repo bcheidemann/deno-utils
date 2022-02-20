@@ -89,6 +89,7 @@ function handleGetOptionValue<T extends OptionTypes>(
 export function getOption<T extends OptionTypes>({
   alias,
   args = Deno.args,
+  defaultValue,
   name,
   type,
 }: Options<T>): NullableOptionTypeMap[T] | Array<OptionTypeMap[T]> {
@@ -110,7 +111,9 @@ export function getOption<T extends OptionTypes>({
     }
   }
   if (results.length === 0) {
-    return handleGetOptionValue(-1, type, args);
+    return (typeof defaultValue === "undefined")
+      ? handleGetOptionValue(-1, type, args)
+      : defaultValue;
   }
   if (results.length === 1) {
     return results[0];
